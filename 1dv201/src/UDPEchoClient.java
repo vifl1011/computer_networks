@@ -15,6 +15,7 @@ public class UDPEchoClient {
     public static final int MYPORT= 0;
     public static final String MSG= "An Echo Message!";
 
+    
     public static void main(String[] args) throws IOException {
 	byte[] buf= new byte[BUFSIZE];
 	if (args.length != 2) {
