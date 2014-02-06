@@ -26,6 +26,7 @@ public class UDPEchoServer {
 				System.exit(1);
 			}
 		}
+		
 
 		/* Create socket */
 		DatagramSocket socket = new DatagramSocket(null);
