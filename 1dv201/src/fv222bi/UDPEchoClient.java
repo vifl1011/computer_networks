@@ -1,3 +1,4 @@
+package fv222bi;
 /*
   UDPEchoClient.java
   A simple echo client with no error handling
