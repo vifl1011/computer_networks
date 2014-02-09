@@ -6,10 +6,13 @@ package fv22bi_TCP;
 
 //package dv201.labb2;
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -19,11 +22,11 @@ public class TCPEchoClient {
 	public static final int MYPORT = 0;
 	static final String charSet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	static Random random = new Random();
-	static BufferedReader bufferedReader;
 
 	public static void main(String[] args) throws IOException {
 		byte[] buf = null;
 		String msg = null;
+		String receive = null;
 		int msgPerSecond = 0;
 		try {
 			buf = new byte[Integer.valueOf(args[2])];
@@ -37,22 +40,18 @@ public class TCPEchoClient {
 		}
 
 		/* Create socket */
-		DatagramSocket datagramSocket = new DatagramSocket(null);
+		Socket socket = new Socket(null);
 
 		/* Create local endpoint using bind() */
 		SocketAddress localBindPoint = new InetSocketAddress(MYPORT);
-		datagramSocket.bind(localBindPoint);
-
-		/* Create remote endpoint */
-		SocketAddress remoteBindPoint = new InetSocketAddress(args[0],
-				Integer.valueOf(args[1]));
-
-		/* Create datagram packet for sending message */
-		DatagramPacket sendPacket = new DatagramPacket(msg.getBytes(),
-				msg.length(), remoteBindPoint);
-
-		/* Create datagram packet for receiving echoed message */
-		DatagramPacket receivePacket = new DatagramPacket(buf, buf.length);
+		socket.bind(localBindPoint);
+		
+		/* Create DataOutputStream which sends to the server */
+		DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+		
+		/* Create BufferedReader to receive echo of the server */
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		
 		if (msgPerSecond > 1) {
 			do {
 				try {
@@ -64,13 +63,13 @@ public class TCPEchoClient {
 				/* Send and receive message */
 
 				for (int it = 0; it < msgPerSecond; it++) {
-					sendReceive(datagramSocket, msg, sendPacket, receivePacket);
+					sendReceive(socket, msg, receive, dataOutputStream, bufferedReader);
 				}
 				System.out.printf("---------------------------------------------------\n");
 
 			} while (true);
 		} else {
-			sendReceive(datagramSocket, msg, sendPacket, receivePacket);
+			sendReceive(socket, msg, receive, dataOutputStream, bufferedReader);
 			System.out.printf("-------------send 1 and done--------------\n");
 		}
 	}
@@ -82,22 +81,20 @@ public class TCPEchoClient {
 		return sb.toString();
 	}
 
-	public static void sendReceive(DatagramSocket socket, String msg,
-			DatagramPacket sendPacket, DatagramPacket receivePacket) {
+	public static void sendReceive(Socket socket, String msg, String receive,
+			DataOutputStream dataOutputStream, BufferedReader bufferedReader) {
 		try {
-			socket.send(sendPacket);
-			socket.receive(receivePacket);
+			dataOutputStream.writeBytes(msg);
+			receive = bufferedReader.readLine();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		/* Compare sent and received message */
-		String receivedString = new String(receivePacket.getData(),
-				receivePacket.getOffset(), receivePacket.getLength());
-		if (receivedString.compareTo(msg) == 0)
+		if (receive.compareTo(msg) == 0)
 			System.out.printf("%d bytes sent and received\n",
-					receivePacket.getLength());
+					receive.length());
 		else
 			System.out.printf("Sent and received msg not equal!\n");
 	}

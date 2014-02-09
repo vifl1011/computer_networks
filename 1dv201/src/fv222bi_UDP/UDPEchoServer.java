@@ -17,6 +17,7 @@ public class UDPEchoServer {
 
 	public static void main(String[] args) throws IOException {
 		byte[] buf = null;
+		/* If no buffersize is given take default value */
 		if (args.length != 1) {
 			buf = new byte[BUFSIZE];
 		} else {

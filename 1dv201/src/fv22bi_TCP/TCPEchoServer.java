@@ -5,18 +5,24 @@ package fv22bi_TCP;
  */
 
 //package dv201.labb2;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.SocketAddress;
 
 public class TCPEchoServer {
 	public static final int BUFSIZE = 1024;
-	public static final int MYPORT = 4950;
+	public static final int MYPORT = 4951;
 
 	public static void main(String[] args) throws IOException {
 		byte[] buf = null;
+		String msg = null;
 		if (args.length != 1) {
 			buf = new byte[BUFSIZE];
 		} else {
@@ -29,26 +35,28 @@ public class TCPEchoServer {
 		}
 
 		/* Create socket */
-		DatagramSocket socket = new DatagramSocket(null);
+		ServerSocket serverSocket = new ServerSocket();
 
 		/* Create local bind point */
 		SocketAddress localBindPoint = new InetSocketAddress(MYPORT);
-		socket.bind(localBindPoint);
+		serverSocket.bind(localBindPoint);
+		Socket socket = serverSocket.accept();
 		System.out.printf("Server started...");
 		while (true) {
+			/* Create DataOutputStream which sends to the client */
+			DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+			
+			/* Create BufferedReader to receive echo of the client */
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			
 			/* Create datagram packet for receiving message */
 			DatagramPacket receivePacket = new DatagramPacket(buf, buf.length);
 
 			/* Receiving message */
-			socket.receive(receivePacket);
-
-			/* Create datagram packet for sending message */
-			DatagramPacket sendPacket = new DatagramPacket(
-					receivePacket.getData(), receivePacket.getLength(),
-					receivePacket.getAddress(), receivePacket.getPort());
+			msg = bufferedReader.readLine();
 
 			/* Send message */
-			socket.send(sendPacket);
+			dataOutputStream.writeBytes(msg);
 			System.out.printf("UDP echo request from %s", receivePacket
 					.getAddress().getHostAddress());
 			System.out.printf(" using port %d\n", receivePacket.getPort());
