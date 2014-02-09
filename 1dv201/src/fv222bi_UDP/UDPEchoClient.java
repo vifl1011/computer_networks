@@ -1,4 +1,4 @@
-package fv222bi;
+package fv222bi_UDP;
 /*
   UDPEchoClient.java
   A simple echo client with no error handling
@@ -31,8 +31,8 @@ public class UDPEchoClient {
 			msgPerSecond = Integer.valueOf(args[4]);
 
 		} catch (NumberFormatException ex) {
-			System.err.printf("usage: %s server_name port buffer_size\n",
-					args[2]);
+			System.err.printf("usage: server_name port buffer_size "
+					+ "message_length message_per_second\n");
 			System.exit(1);
 		}
 
@@ -73,8 +73,6 @@ public class UDPEchoClient {
 			sendReceive(datagramSocket, msg, sendPacket, receivePacket);
 			System.out.printf("-------------send 1 and done--------------\n");
 		}
-
-		// socket.close();
 	}
 
 	public static String randomString(int length) {

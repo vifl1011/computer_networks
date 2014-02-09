@@ -1,4 +1,4 @@
-package fv222bi;
+package fv222bi_UDP;
 /*
   UDPEchoServer.java
   A simple echo server with no error handling
@@ -34,7 +34,7 @@ public class UDPEchoServer {
 		/* Create local bind point */
 		SocketAddress localBindPoint = new InetSocketAddress(MYPORT);
 		socket.bind(localBindPoint);
-		System.out.printf("Server started");
+		System.out.printf("Server started...");
 		while (true) {
 			/* Create datagram packet for receiving message */
 			DatagramPacket receivePacket = new DatagramPacket(buf, buf.length);
