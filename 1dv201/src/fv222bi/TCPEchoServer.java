@@ -1,4 +1,4 @@
-package fv222bi_TCP;
+package fv222bi;
 /*
   UDPEchoServer.java
   A simple echo server with no error handling
