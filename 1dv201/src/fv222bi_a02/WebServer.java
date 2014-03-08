@@ -149,8 +149,7 @@ public class WebServer implements Runnable {
 		}
 	}
 
-	public void sendFile(FileInputStream fileInputStream,
-			DataOutputStream dataOutputStream) throws Exception {
+	public void sendFile(FileInputStream fileInputStream, DataOutputStream dataOutputStream) throws Exception {
 		byte[] buffer = new byte[1024];
 		int bytesRead;
 
